@@ -1,7 +1,7 @@
 const { graphql } = require('@octokit/graphql');
 
 async function main() {
-  const { result } = await graphql(
+  const { repository } = await graphql(
     `{
       repository(owner: "microsoft", name:"vscode") {
         openIssues: issues(states:OPEN) {
@@ -39,7 +39,7 @@ async function main() {
     { headers: { authorization: `token ${process.env['GITHUB_TOKEN']}`, }, }
   );
 
-  console.log(result);
+  console.log(repository);
 }
 
 main();
