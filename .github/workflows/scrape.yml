@@ -13,3 +13,5 @@ jobs:
         run: npm i
       - name: Scrape
         run: node scrape
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
