@@ -1,6 +1,7 @@
 const { graphql } = require('@octokit/graphql');
 const fs = require('fs');
 const zlib = require('zlib');
+const stream = require('stream');
 const consumers = require('stream/consumers');
 const util = require('util');
 const pipe = util.promisify(stream.pipeline);
