@@ -1,7 +1,7 @@
 const { graphql } = require('@octokit/graphql');
 const fs = require('fs');
 const zlib = require('zlib');
-const stream = require('stream');
+const consumers = require('stream/consumers');
 const util = require('util');
 const pipe = util.promisify(stream.pipeline);
 
@@ -47,7 +47,7 @@ async function main() {
   console.log(repository);
 
   const input = fs.createReadStream('data.json.gz').pipe(zlib.createGunzip());
-  const data = JSON.parse(await stream.consumers.text(input));
+  const data = JSON.parse(await consumers.text(input));
 
   data.push({
     timestamp: Date.now(),
