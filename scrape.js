@@ -1,4 +1,9 @@
 const { graphql } = require('@octokit/graphql');
+const fs = require('fs');
+const zlib = require('zlib');
+const stream = require('stream');
+const util = require('util');
+const pipe = util.promisify(stream.pipeline);
 
 async function main() {
   const { repository } = await graphql(
@@ -40,6 +45,24 @@ async function main() {
   );
 
   console.log(repository);
+
+  const input = fs.createReadStream('data.json.gz').pipe(zlib.createGunzip());
+  const data = JSON.parse(await stream.consumers.text(input));
+
+  data.push({
+    timestamp: Date.now(),
+    openIssues: repository.openIssues.totalCount,
+    closedIssues: repository.closedIssues.totalCount,
+    openBugs: repository.openBugs.totalCount,
+    closedBugs: repository.closedBugs.totalCount,
+    openFeatureRequests: repository.openFeatureRequests.totalCount,
+    closedFeatureRequests: repository.closedFeatureRequests.totalCount,
+    openPRs: repository.openPRs.totalCount,
+    closedPRs: repository.closedPRs.totalCount,
+    mergedPRs: repository.mergedPRs.totalCount
+  });
+
+  await pipe([JSON.stringify(data)], zlib.createGzip(), fs.createWriteStream('data.json.gz'));
 }
 
 main();
