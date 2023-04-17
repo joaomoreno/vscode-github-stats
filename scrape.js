@@ -42,22 +42,20 @@ async function main() {
 
   console.log(repository);
 
-  const data = JSON.parse(fs.readFileSync('data.json', 'utf8'));
+  const data = [
+    Date.now(),
+    repository.openIssues.totalCount,
+    repository.closedIssues.totalCount,
+    repository.openBugs.totalCount,
+    repository.closedBugs.totalCount,
+    repository.openFeatureRequests.totalCount,
+    repository.closedFeatureRequests.totalCount,
+    repository.openPRs.totalCount,
+    repository.closedPRs.totalCount,
+    repository.mergedPRs.totalCount
+  ];
 
-  data.push({
-    timestamp: Date.now(),
-    openIssues: repository.openIssues.totalCount,
-    closedIssues: repository.closedIssues.totalCount,
-    openBugs: repository.openBugs.totalCount,
-    closedBugs: repository.closedBugs.totalCount,
-    openFeatureRequests: repository.openFeatureRequests.totalCount,
-    closedFeatureRequests: repository.closedFeatureRequests.totalCount,
-    openPRs: repository.openPRs.totalCount,
-    closedPRs: repository.closedPRs.totalCount,
-    mergedPRs: repository.mergedPRs.totalCount
-  });
-
-  fs.writeFileSync('data.json', JSON.stringify(data));
+  fs.appendFileSync('data.jsonl', '\n' + JSON.stringify(data));
 }
 
 main();
