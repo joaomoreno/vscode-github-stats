@@ -15,7 +15,8 @@ jobs:
       - name: Install dependencies
         run: npm i
       - name: Scrape
-        run: node scrape
+        run: |
+          { cat data.jsonl.gz | gunzip -c ; node scrape.js; } | gzip > data.jsonl.gz
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PUBLIC_GITHUB_TOKEN: ${{ secrets.PUBLIC_GITHUB_TOKEN }}

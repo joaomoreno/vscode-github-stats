@@ -1,5 +1,4 @@
 const { graphql } = require('@octokit/graphql');
-const fs = require('fs');
 
 async function main() {
   const { repository } = await graphql(
@@ -43,7 +42,7 @@ async function main() {
   console.log(repository);
 
   const data = [
-    Date.now(),
+    Math.floor(Date.now() / 1000),
     repository.openIssues.totalCount,
     repository.closedIssues.totalCount,
     repository.openBugs.totalCount,
@@ -55,7 +54,7 @@ async function main() {
     repository.mergedPRs.totalCount
   ];
 
-  fs.appendFileSync('data.jsonl', '\n' + JSON.stringify(data));
+  process.stdout.write('\n' + JSON.stringify(data));
 }
 
 main();
