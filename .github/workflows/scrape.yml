@@ -18,7 +18,7 @@ jobs:
       - name: Scrape
         run: |
           set -e
-          node scrape.js
+          { cat data.jsonl.gz | gunzip -c ; node scrape.js; }
           # { cat data.jsonl.gz | gunzip -c ; node scrape.js; } | gzip > data.jsonl.gz
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
