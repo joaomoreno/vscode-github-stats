@@ -39,8 +39,6 @@ async function main() {
     { headers: { authorization: `token ${process.env['GITHUB_TOKEN']}`, }, }
   );
 
-  console.log(repository);
-
   const data = [
     Math.floor(Date.now() / 1000),
     repository.openIssues.totalCount,
