@@ -18,9 +18,9 @@ jobs:
       - name: Scrape
         run: |
           set -e
-          gunzip -c data.jsonl.gz > data.jsonl
-          node scrape.js >> data.jsonl
-          gzip -c data.jsonl > data.jsonl.gz
+          gunzip -c docs/data.jsonl.gz > docs/data.jsonl
+          node scrape.js >> docs/data.jsonl
+          gzip -c docs/data.jsonl > docs/data.jsonl.gz
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PUBLIC_GITHUB_TOKEN: ${{ secrets.PUBLIC_GITHUB_TOKEN }}
@@ -28,6 +28,6 @@ jobs:
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "8732198738+github-actions[bot]@users.noreply.github.com"
-          git add data.jsonl.gz
-          git commit -am "Update data.jsonl.gz"
+          git add docs/data.jsonl.gz
+          git commit -am "Update data"
           git push
