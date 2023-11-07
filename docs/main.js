@@ -12,7 +12,7 @@ async function fetchData() {
   return lines.split('\n').map(JSON.parse);
 }
 
-function Chart({ data, title, column, from, to }) {
+function Chart({ data, title, column, from, to, background }) {
   const ref = useRef(null);
 
   useEffect(() => {
@@ -21,6 +21,8 @@ function Chart({ data, title, column, from, to }) {
     const x = d => new Date(d[0] * 1000);
     const filter = d => d[0] * 1000 > from.getTime();
     const result = Plot.plot({
+      width: 600,
+      height: 400,
       title,
       x: {
         domain: [from, to],
@@ -28,6 +30,7 @@ function Chart({ data, title, column, from, to }) {
       },
       marks: [
         Plot.ruleY([0]),
+        Plot.ruleX([from]),
         Plot.lineY(data, { filter, x, y: column }),
         Plot.crosshair(data, { x, y: column })
       ]
@@ -40,7 +43,7 @@ function Chart({ data, title, column, from, to }) {
     }
   }, [ref.current, data, from, to]);
 
-  return html`<div ref=${ref}></div>`;
+  return html`<div class="chart" ref=${ref}></div>`;
 }
 
 function Main() {
@@ -63,10 +66,10 @@ function Main() {
       </div>
     </form>
     <div class="charts">
-      <${Chart} data=${data} title="Open Issues" column="1" from=${from} to=${to} ></div>
-      <${Chart} data=${data} title="Open PRs" column="7" from=${from} to=${to} ></div>
-      <${Chart} data=${data} title="Open Bugs" column="3" from=${from} to=${to} ></div>
-      <${Chart} data=${data} title="Open Feature Requests" column="5" from=${from} to=${to} ></div>
+      <${Chart} data=${data} title="Open Issues" column="1" from=${from} to=${to}></div>
+      <${Chart} data=${data} title="Open PRs" column="7" from=${from} to=${to}></div>
+      <${Chart} data=${data} title="Open Bugs" column="3" from=${from} to=${to}></div>
+      <${Chart} data=${data} title="Open Feature Requests" column="5" from=${from} to=${to}></div>
     </div>
   </div>`;
 }

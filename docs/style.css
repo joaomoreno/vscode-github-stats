@@ -1,10 +1,15 @@
+body {
+  font-family: 'Inter', sans-serif;
+}
+
 .form {
   display: flex;
   gap: 1rem;
 }
 
 .charts {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  column-gap: 1rem;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-around;
+  gap: 1em;
 }
