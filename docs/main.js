@@ -2,6 +2,10 @@ import * as Plot from "https://esm.sh/@observablehq/plot@0.6";
 import { useRef, useEffect, useState } from "https://esm.sh/react@18.2.0";
 import ReactDOM from "https://esm.sh/react-dom@18.2.0";
 import { html } from "https://esm.sh/htm@3.1.1/react";
+import dayjs from "https://esm.sh/dayjs@1";
+import relativeTime from "https://esm.sh/dayjs@1/plugin/relativeTime";
+
+dayjs.extend(relativeTime);
 
 async function fetchData() {
   const blob = await fetch('data.jsonl.gz');
@@ -63,6 +67,9 @@ function Main() {
       <div>
         <label for="to">To:</label>
         <input name="to" id="to" type="date" value=${to.toISOString().slice(0, 10)} onInput=${e => setTo(new Date(e.target.value))} />
+      </div>
+      <div>
+        ${dayjs(to).from(dayjs(from), true)}
       </div>
     </form>
     <div class="charts">
