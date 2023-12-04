@@ -12,7 +12,7 @@ async function fetchData() {
   return lines.split('\n').map(JSON.parse);
 }
 
-function Chart({ data, title, column, from, to, background }) {
+function Chart({ data, title, column, from, to }) {
   const ref = useRef(null);
 
   useEffect(() => {
@@ -49,7 +49,7 @@ function Chart({ data, title, column, from, to, background }) {
 function Main() {
   const [data, setData] = useState([]);
   const [to, setTo] = useState(new Date());
-  const [from, setFrom] = useState(new Date(Date.now() - 365 * 24 * 60 * 60 * 1000));
+  const [from, setFrom] = useState(new Date(Date.now() - 15 * 24 * 60 * 60 * 1000));
 
   useEffect(() => fetchData().then(data => setData(data), console.error), []);
 
