@@ -1,4 +1,4 @@
-import * as Plot from "https://esm.sh/@observablehq/plot@0.6.11";
+import * as Plot from "https://esm.sh/@observablehq/plot@0.6.9";
 import { useRef, useEffect, useState } from "https://esm.sh/react@18.2.0";
 import ReactDOM from "https://esm.sh/react-dom@18.2.0";
 import { html } from "https://esm.sh/htm@3.1.1/react";
