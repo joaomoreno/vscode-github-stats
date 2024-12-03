@@ -4,7 +4,6 @@ import ReactDOM from "https://esm.sh/react-dom@18.2.0";
 import { html } from "https://esm.sh/htm@3.1.1/react";
 import dayjs from "https://esm.sh/dayjs@1";
 import relativeTime from "https://esm.sh/dayjs@1/plugin/relativeTime";
-import { useDebounce } from "https://esm.sh/use-debounce@10.0.4";
 
 dayjs.extend(relativeTime);
 
@@ -55,8 +54,18 @@ function Main() {
   const [data, setData] = useState([]);
   const [to, setTo] = useState(new Date());
   const [from, setFrom] = useState(new Date(Date.now() - 15 * 24 * 60 * 60 * 1000));
-  const [debouncedTo] = useDebounce(to, 250);
-  const [debouncedFrom] = useDebounce(from, 250);
+  const [debouncedTo, setDebouncedTo] = useState(to);
+  const [debouncedFrom, setDebouncedFrom] = useState(from);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setDebouncedTo(to), 250);
+    return () => clearTimeout(timer);
+  }, [to]);
+
+  useEffect(() => {
+    const timer = setTimeout(() => setDebouncedFrom(from), 250);
+    return () => clearTimeout(timer);
+  }, [from]);
 
   useEffect(() => fetchData().then(data => setData(data), console.error), []);
 
