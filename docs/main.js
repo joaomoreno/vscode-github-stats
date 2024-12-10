@@ -16,7 +16,7 @@ async function fetchData() {
   return lines.split('\n').map(JSON.parse);
 }
 
-function Chart({ data, title, column, from, to }) {
+function Chart({ data, title, column, from, to, useZeroMin }) {
   const ref = useRef(null);
 
   useEffect(() => {
@@ -24,6 +24,14 @@ function Chart({ data, title, column, from, to }) {
 
     const x = d => new Date(d[0] * 1000);
     const filter = d => d[0] * 1000 > from.getTime();
+    const filteredData = data.filter(filter);
+
+    const yMax = Math.max(...filteredData.map(d => d[column]));
+    const yMinRaw = Math.min(...filteredData.map(d => d[column]));
+    const delta = yMax - yMinRaw;
+    const yMin = useZeroMin ? 0 : yMinRaw - (delta * 0.1);
+
+
     const result = Plot.plot({
       width: 600,
       height: 400,
@@ -31,6 +39,9 @@ function Chart({ data, title, column, from, to }) {
       x: {
         domain: [from, to],
         grid: true
+      },
+      y: {
+        domain: [yMin, Math.max(...filteredData.map(d => d[column]))]
       },
       marks: [
         Plot.ruleY([0]),
@@ -45,7 +56,7 @@ function Chart({ data, title, column, from, to }) {
     } else {
       ref.current.appendChild(result);
     }
-  }, [ref.current, data, from, to]);
+  }, [ref.current, data, from, to, useZeroMin]);
 
   return html`<div class="chart" ref=${ref}></div>`;
 }
@@ -56,6 +67,7 @@ function Main() {
   const [from, setFrom] = useState(new Date(Date.now() - 15 * 24 * 60 * 60 * 1000));
   const [debouncedTo, setDebouncedTo] = useState(to);
   const [debouncedFrom, setDebouncedFrom] = useState(from);
+  const [useZeroMin, setUseZeroMin] = useState(false);
 
   useEffect(() => {
     const timer = setTimeout(() => setDebouncedTo(to), 250);
@@ -77,18 +89,24 @@ function Main() {
         <input name="from" id="from" type="date" value=${from.toISOString().slice(0, 10)} onInput=${e => setFrom(new Date(e.target.value))} />
       </div>
       <div>
-        <label for="to">To:</label>
+        <label for="to">To:</labbel>
         <input name="to" id="to" type="date" value=${to.toISOString().slice(0, 10)} onInput=${e => setTo(new Date(e.target.value))} />
       </div>
       <div>
         ${dayjs(to).from(dayjs(from), true)}
       </div>
+      <div>
+        <label>
+          <input type="checkbox" checked=${useZeroMin} onChange=${e => setUseZeroMin(e.target.checked)} />
+          Set minY to 0
+        </label>
+      </div>
     </form>
     <div class="charts">
-      <${Chart} data=${data} title="Open Issues" column="1" from=${debouncedFrom} to=${debouncedTo}></div>
-      <${Chart} data=${data} title="Open PRs" column="7" from=${debouncedFrom} to=${debouncedTo}></div>
-      <${Chart} data=${data} title="Open Bugs" column="3" from=${debouncedFrom} to=${debouncedTo}></div>
-      <${Chart} data=${data} title="Open Feature Requests" column="5" from=${debouncedFrom} to=${debouncedTo}></div>
+      <${Chart} data=${data} title="Open Issues" column="1" from=${debouncedFrom} to=${debouncedTo} useZeroMin=${useZeroMin}></div>
+      <${Chart} data=${data} title="Open PRs" column="7" from=${debouncedFrom} to=${debouncedTo} useZeroMin=${useZeroMin}></div>
+      <${Chart} data=${data} title="Open Bugs" column="3" from=${debouncedFrom} to=${debouncedTo} useZeroMin=${useZeroMin}></div>
+      <${Chart} data=${data} title="Open Feature Requests" column="5" from=${debouncedFrom} to=${debouncedTo} useZeroMin=${useZeroMin}></div>
     </div>
   </div>`;
 }
