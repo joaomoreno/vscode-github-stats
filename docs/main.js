@@ -46,8 +46,7 @@ function Chart({ data, title, column, from, to, useZeroMin }) {
       marks: [
         Plot.ruleY([0]),
         Plot.ruleX([from]),
-        Plot.lineY(data, { filter, x, y: column }),
-        Plot.crosshair(data, { x, y: column })
+        Plot.lineY(data, { filter, x, y: column, tip: "x" }),
       ]
     });
 
