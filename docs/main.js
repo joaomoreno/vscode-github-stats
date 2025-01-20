@@ -1,9 +1,11 @@
 import * as Plot from "https://esm.sh/@observablehq/plot@0.6.13";
-import { useRef, useEffect, useState } from "https://esm.sh/react@18.2.0";
-import ReactDOM from "https://esm.sh/react-dom@18.2.0";
-import { html } from "https://esm.sh/htm@3.1.1/react";
+import React from "https://esm.sh/react@18.3.1";
+import ReactDOM from "https://esm.sh/react-dom@18.3.1";
+import htm from "https://esm.sh/htm@3.1.1";
 import dayjs from "https://esm.sh/dayjs@1";
 import relativeTime from "https://esm.sh/dayjs@1/plugin/relativeTime";
+
+const html = htm.bind(React.createElement);
 
 dayjs.extend(relativeTime);
 
@@ -17,9 +19,9 @@ async function fetchData() {
 }
 
 function Chart({ data, title, column, from, to, useZeroMin }) {
-  const ref = useRef(null);
+  const ref = React.useRef(null);
 
-  useEffect(() => {
+  React.useEffect(() => {
     if (data.length === 0) return;
 
     const x = d => new Date(d[0] * 1000);
@@ -61,24 +63,24 @@ function Chart({ data, title, column, from, to, useZeroMin }) {
 }
 
 function Main() {
-  const [data, setData] = useState([]);
-  const [to, setTo] = useState(new Date());
-  const [from, setFrom] = useState(new Date(Date.now() - 15 * 24 * 60 * 60 * 1000));
-  const [debouncedTo, setDebouncedTo] = useState(to);
-  const [debouncedFrom, setDebouncedFrom] = useState(from);
-  const [useZeroMin, setUseZeroMin] = useState(false);
+  const [data, setData] = React.useState([]);
+  const [to, setTo] = React.useState(new Date());
+  const [from, setFrom] = React.useState(new Date(Date.now() - 15 * 24 * 60 * 60 * 1000));
+  const [debouncedTo, setDebouncedTo] = React.useState(to);
+  const [debouncedFrom, setDebouncedFrom] = React.useState(from);
+  const [useZeroMin, setUseZeroMin] = React.useState(false);
 
-  useEffect(() => {
+  React.useEffect(() => {
     const timer = setTimeout(() => setDebouncedTo(to), 250);
     return () => clearTimeout(timer);
   }, [to]);
 
-  useEffect(() => {
+  React.useEffect(() => {
     const timer = setTimeout(() => setDebouncedFrom(from), 250);
     return () => clearTimeout(timer);
   }, [from]);
 
-  useEffect(() => fetchData().then(data => setData(data), console.error), []);
+  React.useEffect(() => fetchData().then(data => setData(data), console.error), []);
 
   return html`<div>
     <h1>VS Code Stats</h1>
