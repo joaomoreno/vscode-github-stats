@@ -65,6 +65,7 @@ function Chart({ data, title, column, from, to, useZeroMin }) {
 
 function ThemeSwitcher() {
   const [theme, setTheme] = React.useState(localStorage.getItem('theme') || 'auto');
+  const [autoRefresh, setAutoRefresh] = React.useState(localStorage.getItem('autoRefresh') === 'true');
 
   React.useEffect(() => {
     localStorage.setItem('theme', theme);
@@ -80,13 +81,29 @@ function ThemeSwitcher() {
     }
   }, [theme]);
 
+  React.useEffect(() => {
+    localStorage.setItem('autoRefresh', autoRefresh);
+    if (autoRefresh) {
+      const timer = setTimeout(() => window.location.reload(), 24 * 60 * 60 * 1000);
+      return () => clearTimeout(timer);
+    }
+  }, [autoRefresh]);
+
   return html`
-    <div class="theme-switcher">
-      <select value=${theme} onChange=${e => setTheme(e.target.value)}>
+    <div class="top-right-controls">
+      <div>
+        <label style=${{ marginLeft: '1em' }}>
+          <input type="checkbox" checked=${autoRefresh} onChange=${e => setAutoRefresh(e.target.checked)} />
+          Auto-refresh
+        </label>
+      </div>
+      <div>
+        <select value=${theme} onChange=${e => setTheme(e.target.value)}>
         <option value="auto">Auto</option>
         <option value="light">Light</option>
         <option value="dark">Dark</option>
-      </select>
+        </select>
+      </div>
     </div>
   `;
 }

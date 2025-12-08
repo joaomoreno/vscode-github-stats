@@ -26,10 +26,12 @@ body {
   color: var(--text-color);
 }
 
-.theme-switcher {
+.top-right-controls {
   position: absolute;
   top: 1rem;
   right: 1rem;
+  display: flex;
+  gap: 0.5rem;
 }
 
 .form {
