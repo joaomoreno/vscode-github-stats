@@ -92,12 +92,37 @@ function ThemeSwitcher() {
 }
 
 function Main() {
+  const params = new URLSearchParams(location.search);
+  const initialTo = params.has('to') && !isNaN(new Date(params.get('to'))) ? new Date(params.get('to')) : new Date();
+  const initialFrom = params.has('from') && !isNaN(new Date(params.get('from'))) ? new Date(params.get('from')) : new Date(Date.now() - 15 * 24 * 60 * 60 * 1000);
+  const initialUseZeroMin = params.has('useZeroMin') ? params.get('useZeroMin') === 'true' : false;
+
   const [data, setData] = React.useState([]);
-  const [to, setTo] = React.useState(new Date());
-  const [from, setFrom] = React.useState(new Date(Date.now() - 15 * 24 * 60 * 60 * 1000));
+  const [to, setTo] = React.useState(initialTo);
+  const [from, setFrom] = React.useState(initialFrom);
   const [debouncedTo, setDebouncedTo] = React.useState(to);
   const [debouncedFrom, setDebouncedFrom] = React.useState(from);
-  const [useZeroMin, setUseZeroMin] = React.useState(false);
+  const [useZeroMin, setUseZeroMin] = React.useState(initialUseZeroMin);
+  const isFirstRun = React.useRef(true);
+  const skipUpdate = React.useRef(false);
+
+  React.useEffect(() => {
+    if (isFirstRun.current) {
+      isFirstRun.current = false;
+      return;
+    }
+
+    if (skipUpdate.current) {
+      skipUpdate.current = false;
+      return;
+    }
+
+    const params = new URLSearchParams();
+    params.set('from', from.toISOString().slice(0, 10));
+    params.set('to', to.toISOString().slice(0, 10));
+    params.set('useZeroMin', useZeroMin);
+    window.history.replaceState(null, '', '?' + params.toString());
+  }, [from, to, useZeroMin]);
 
   React.useEffect(() => {
     const timer = setTimeout(() => setDebouncedTo(to), 250);
@@ -108,6 +133,14 @@ function Main() {
     const timer = setTimeout(() => setDebouncedFrom(from), 250);
     return () => clearTimeout(timer);
   }, [from]);
+
+  const reset = () => {
+    skipUpdate.current = true;
+    setTo(new Date());
+    setFrom(new Date(Date.now() - 15 * 24 * 60 * 60 * 1000));
+    setUseZeroMin(false);
+    window.history.replaceState(null, '', location.pathname);
+  };
 
   React.useEffect(() => fetchData().then(data => setData(data), console.error), []);
 
@@ -124,13 +157,16 @@ function Main() {
         <input name="to" id="to" type="date" value=${to.toISOString().slice(0, 10)} onInput=${e => setTo(new Date(e.target.value))} />
       </div>
       <div>
-        ${dayjs(to).from(dayjs(from), true)}
+      ${dayjs(to).from(dayjs(from), true)}
       </div>
       <div>
-        <label>
-          <input type="checkbox" checked=${useZeroMin} onChange=${e => setUseZeroMin(e.target.checked)} />
-          Set minY to 0
-        </label>
+      <label>
+      <input type="checkbox" checked=${useZeroMin} onChange=${e => setUseZeroMin(e.target.checked)} />
+      Set minY to 0
+      </label>
+      </div>
+      <div>
+        <button type="button" onClick=${reset}>Reset</button>
       </div>
     </form>
     <div class="charts">
