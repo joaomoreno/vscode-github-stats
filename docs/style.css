@@ -45,3 +45,8 @@ body {
   justify-content: space-around;
   gap: 1em;
 }
+
+/* both themes */
+[aria-label="tip"] text {
+  fill: #000 !important;
+}
