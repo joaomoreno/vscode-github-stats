@@ -1,5 +1,35 @@
+:root {
+  --bg-color: #ffffff;
+  --text-color: #000000;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg-color: #1a1a1a;
+    --text-color: #ffffff;
+  }
+}
+
+:root.light {
+  --bg-color: #ffffff;
+  --text-color: #000000;
+}
+
+:root.dark {
+  --bg-color: #1a1a1a;
+  --text-color: #ffffff;
+}
+
 body {
   font-family: 'Inter', sans-serif;
+  background-color: var(--bg-color);
+  color: var(--text-color);
+}
+
+.theme-switcher {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
 }
 
 .form {

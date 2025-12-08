@@ -35,6 +35,7 @@ function Chart({ data, title, column, from, to, useZeroMin }) {
 
 
     const result = Plot.plot({
+      style: { background: "transparent", color: "currentColor" },
       width: 600,
       height: 400,
       title,
@@ -62,6 +63,34 @@ function Chart({ data, title, column, from, to, useZeroMin }) {
   return html`<div class="chart" ref=${ref}></div>`;
 }
 
+function ThemeSwitcher() {
+  const [theme, setTheme] = React.useState(localStorage.getItem('theme') || 'auto');
+
+  React.useEffect(() => {
+    localStorage.setItem('theme', theme);
+    if (theme === 'dark') {
+      document.documentElement.classList.add('dark');
+      document.documentElement.classList.remove('light');
+    } else if (theme === 'light') {
+      document.documentElement.classList.add('light');
+      document.documentElement.classList.remove('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+      document.documentElement.classList.remove('light');
+    }
+  }, [theme]);
+
+  return html`
+    <div class="theme-switcher">
+      <select value=${theme} onChange=${e => setTheme(e.target.value)}>
+        <option value="auto">Auto</option>
+        <option value="light">Light</option>
+        <option value="dark">Dark</option>
+      </select>
+    </div>
+  `;
+}
+
 function Main() {
   const [data, setData] = React.useState([]);
   const [to, setTo] = React.useState(new Date());
@@ -83,6 +112,7 @@ function Main() {
   React.useEffect(() => fetchData().then(data => setData(data), console.error), []);
 
   return html`<div>
+    <${ThemeSwitcher} />
     <h1>VS Code Stats</h1>
     <form class="form">
       <div>
